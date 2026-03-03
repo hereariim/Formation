@@ -136,8 +136,7 @@ This configuration tells napari:
 ## Dependencies and pyproject.toml
 
 The plugin relies on the following libraries:
-```
-opencv-python
+``` 
 torch
 torchvision
 ```
