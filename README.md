@@ -18,7 +18,9 @@ This is a training tutorial to learn how to deploy your model in Napari.
 
 ## How this training works
 
-## Additional ressources
+```bash
+git clone https://github.com/hereariim/Formation.git
+```
 
 ## Author
 
