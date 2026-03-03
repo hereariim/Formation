@@ -116,10 +116,10 @@ contributions:
   commands:
     - id: formation.make_qwidget
       python_name: formation:unet_segmentation
-      title: Make example QWidget
+      title: Segmentation
   widgets:
     - command: formation.make_qwidget
-      display_name: Example QWidget
+      display_name: Segmentation
   menus:
     napari/layers/segment:
       - command: formation.make_qwidget
