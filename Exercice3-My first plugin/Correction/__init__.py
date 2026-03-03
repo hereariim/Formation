@@ -7,6 +7,4 @@ from ._widget import (
     unet_segmentation,
 )
 
-__all__ = (
-    'unet_segmentation',
-)
+__all__ = ('unet_segmentation',)

@@ -1,50 +1,53 @@
-import torch
-import torch.nn as nn
-import numpy as np
-from magicgui import magic_factory
-from napari.types import ImageData, LabelsData
+import tempfile
 
 # -----------------------
 # import modele
 # -----------------------
-
 from pathlib import Path
+
+import numpy as np
 import requests
-import tempfile
+import torch
+import torch.nn as nn
+from magicgui import magic_factory
+from napari.types import ImageData, LabelsData
 
 
 def get_model_path():
 
-    temp_root = Path(tempfile.gettempdir()) / "formation_models"
+    temp_root = Path(tempfile.gettempdir()) / 'formation_models'
     temp_root.mkdir(parents=True, exist_ok=True)
 
-    model_path = temp_root / "best_UNet.pt"
+    model_path = temp_root / 'best_UNet.pt'
 
     if not model_path.exists():
+        print('Downloading UNet model...')
 
-        print("Downloading UNet model...")
-
-        share_url = "https://laris-cloud.sien-pdl.fr/index.php/s/W66Bpd6H55izzH8"
-        download_url = share_url.rstrip("/") + "/download"
+        share_url = (
+            'https://laris-cloud.sien-pdl.fr/index.php/s/W66Bpd6H55izzH8'
+        )
+        download_url = share_url.rstrip('/') + '/download'
 
         with requests.get(download_url, stream=True, timeout=60) as r:
             r.raise_for_status()
 
-            with open(model_path, "wb") as f:
+            with open(model_path, 'wb') as f:
                 for chunk in r.iter_content(chunk_size=1024 * 1024):
                     if chunk:
                         f.write(chunk)
 
-        print("Download complete:", model_path)
+        print('Download complete:', model_path)
 
     else:
-        print("Model already exists:", model_path)
+        print('Model already exists:', model_path)
 
     return model_path
+
 
 # -----------------------
 # UNET
 # -----------------------
+
 
 class DoubleConv(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -104,8 +107,12 @@ class UNet(nn.Module):
 
         self.double_conv = DoubleConv(n_filters * 32, n_filters * 64)
 
-        self.up_conv4 = UpBlock(n_filters * 32 + n_filters * 64, n_filters * 32)
-        self.up_conv3 = UpBlock(n_filters * 16 + n_filters * 32, n_filters * 16)
+        self.up_conv4 = UpBlock(
+            n_filters * 32 + n_filters * 64, n_filters * 32
+        )
+        self.up_conv3 = UpBlock(
+            n_filters * 16 + n_filters * 32, n_filters * 16
+        )
         self.up_conv2 = UpBlock(n_filters * 8 + n_filters * 16, n_filters * 8)
         self.up_conv1 = UpBlock(n_filters * 8 + n_filters * 4, n_filters * 4)
 
@@ -129,8 +136,7 @@ class UNet(nn.Module):
         return x
 
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-from pathlib import Path
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 MODEL_PATH = get_model_path()
@@ -143,19 +149,15 @@ model.load_state_dict(state_dict)
 model.to(DEVICE)
 model.eval()
 
-@magic_factory(call_button="Run UNet")
+
+@magic_factory(call_button='Run UNet')
 def unet_segmentation(
     image: ImageData,
 ) -> LabelsData:
 
     img = image.astype(np.float32)
 
-    img_tensor = (
-        torch.from_numpy(img)
-        .permute(2, 0, 1)
-        .unsqueeze(0)
-        .to(DEVICE)
-    )
+    img_tensor = torch.from_numpy(img).permute(2, 0, 1).unsqueeze(0).to(DEVICE)
 
     with torch.no_grad():
         output = model(img_tensor)

@@ -6,6 +6,8 @@
 torch with GPU
 matplotlib
 opencv-python
+torch
+torchvision
 ```
 
 ## Create your environment and install napari
