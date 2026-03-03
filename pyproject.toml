@@ -6,8 +6,8 @@ readme = "README.md"
 license = "BSD-3-Clause"
 license-files = ["LICENSE"]
 authors = [
-  {name = "Imhorphen"},
-  {email = "formation@france.fr"},
+  {name = "imhorphen"},
+  {email = "formation@mail.fr"},
 ]
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
